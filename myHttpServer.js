@@ -31,16 +31,37 @@ const server = http.createServer((req, res) => {
     else if(req.url.slice(0,6)=="/input"){
         res.statusCode = 200;
         let url1 = req.url.split("?");
-        //let urlquery = url[1].split("&");
-        //let firstQuery = urlquery[0].split("=");
-        //let secondQuery = urlquery[1].split("=");
-        //let queryData = url.parse(req.url,true).query
-        let obQuery = querystring.parse(url1[1])
-        res.setHeader('Content-Type', 'text/html'); 
-        res.write(obQuery.name123+"<br>");
-        res.write(obQuery.submit1+"<br>");  
-        res.end("submit success!")
-    }
+        let obQuery = querystring.parse(url1[1]);
+        if(obQuery.submit1 == "Save"){
+            fs.writeFile('./savefile',obQuery.name123,(err)=>{
+                if(err) console.log("Write file err!")
+                else console.log("Write file success!")
+            })
+        }
+
+        else {
+            fs.appendFile('./savefile',obQuery.name123,(err)=>{
+                if(err) console.log("Append file err!")
+                else console.log("Append file success!")
+            })
+        }
+        // res.setHeader('Content-Type', 'text/html'); 
+        // res.write(obQuery.name123+"<br>"); 
+        // res.write(obQuery.submit1+"<br>");   
+        // res.end("submit success!")
+    
+
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/html');
+    fs.readFile("form1.html",(err,fsData)=>{
+        if(err){
+            console.log("Read file error.")
+            throw err
+        }
+        res.write(fsData)
+        res.end()
+    })
+  }
     else{
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/html');
